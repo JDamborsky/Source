@@ -50,3 +50,5 @@ Write-Log -Message 'simple activity'
 Write-Log -Message 'warning' -LogLevel 2
 Write-Log -Message 'Error' -LogLevel 3
 write-log "Fail" 3
+
+
