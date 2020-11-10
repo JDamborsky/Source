@@ -40,6 +40,28 @@ Function GetGroupsUser
 	Return $GroupArray
 }
 
+function ConvertCharsToAdsiSearcher
+{
+	param (
+		[string]$AdsiSearchString,
+		[Bool]$Reverse = $False)
+	#   Adsisearcher does fail with some characters
+	
+	If ($Reverse -eq $False)
+	{
+		#   $AdsiSearchString = $AdsiSearchString -replace '\+', '+'
+		$AdsiSearchString = $AdsiSearchString -replace '[#(]', '\28'
+		$AdsiSearchString = $AdsiSearchString -replace '[#)]', '\29'
+	}
+	else
+	{
+		$AdsiSearchString = $AdsiSearchString.replace('\28', '(')
+		$AdsiSearchString = $AdsiSearchString.replace('\29', ')')
+	}
+	
+	$ReturnString = $AdsiSearchString
+	Return $ReturnString
+}
 
 Function GetGroupnameFromDn
 {
