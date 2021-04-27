@@ -32,9 +32,7 @@ Function Start-Log
 		catch
 		{	Write-Error $_.Exception.Message    }
 	}
-
 }
-
 
 function Write-Log
 {
@@ -56,9 +54,6 @@ param (
 		#$Line | Out-File $($global:ScriptLogFilePath) -Append 
 	}
 }
-
-
-
 
 # Function to return LDAP Searchroot from domain, also trusted domains
 function GetLdapFromDomainShortName
@@ -100,38 +95,6 @@ function GetLdapFromDomainShortName
     }
     
     Return $LdapStr
-}
-
-$UserinfoFromDomainBlock = {
-    param
-    (
-        [parameter(Mandatory = $true)]
-        [String]$UsernameToFind,
-        [parameter(Mandatory = $true)]
-        [String]$LdapSearchRoot
-    )
-    
-    $IsObjectFound  = $false
-    
-    $AdsiSearcher = [adsisearcher]"(&(objectCategory=Person)(objectClass=user)(sAMAccountName=$UsernameToFind))"
-    $AdsiSearcher.PropertiesToLoad.AddRange(('name'))
-    $AdsiSearcher.searchRoot = [ADSI]$LdapSearchRoot
-    $AdsiSearchList = $AdsiSearcher.FindAll()
-    
-    foreach ($UserItem in $AdsiSearchList)
-    {
-        $IsObjectFound      =   $true
-        $User_Name = $UserItem.Properties.Item('name')[0]
-    }
-    
-    $tmpHashtable = @{
-        ObjectFound = $IsObjectFound
-        name        = "$User_Name"
-    }
-    $ReturnObject = [pscustomobject]$tmpHashtable
-    #Start-Sleep 10
-    Return $ReturnObject
-    
 }
 
 $MachinInfoFromDomainBlock = {
@@ -211,16 +174,9 @@ $MachinInfoFromWmiBlock = {
         $MachineHwArray += @([PsCustomObject]@{ Description = "Monitor:"; Value = $MonitorDescription })
     }
     
-    #$MachineHwArray += @([PsCustomObject]@{ Description = "Monitor Produsent:"; Value = $((Get-WmiObject Win32_DesktopMonitor).MonitorManufacturer) })
-    #$MachineHwArray += @([PsCustomObject]@{ Description = "Monitor Type:"; Value = $((Get-WmiObject Win32_DesktopMonitor).Caption) })
-    
     #[math]::round($((Get-WmiObject Win32_VideoController).CurrentNumberOfColors) /1Mb, 0)
     [math]::round($($LogicalDiskItem.FreeSpace) /1Gb, 0)
     
-    #$MachineHwArray += @([PsCustomObject]@{ Description = "Oppfriskningsrate:"; Value = $((Get-WmiObject Win32_VideoController).CurrentRefreshRate) })
-    #$MachineHwArray += @([PsCustomObject]@{ Description = "Oppløsning Horisontal:"; Value = $((Get-WmiObject Win32_VideoController).CurrentHorizontalResolution) })
-    #$MachineHwArray += @([PsCustomObject]@{ Description = "Oppløsning Vertikal:"; Value = $((Get-WmiObject Win32_VideoController).CurrentVerticalResolution) })
-    #$MachineHwArray += @([PsCustomObject]@{ Description = "Antall farger (Mb):"; Value = [math]::round($((Get-WmiObject Win32_VideoController).CurrentNumberOfColors) /1Mb, 0) })
     
     
     $OkFan = 0
@@ -255,6 +211,7 @@ $MachinInfoFromWmiBlock = {
     
     return $MachineHwArray
 }
+
 
 $ComputerInfoBlock = {
     $TmpComputerinfo = Get-ComputerInfo
